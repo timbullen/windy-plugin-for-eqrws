@@ -1,0 +1,14 @@
+[Unit]
+Description=the EQRWS Windy plugin
+After=syslog.target network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/EQRWS_windy_plugin -c /etc/EQRWS_windy_plugin/configuration.ini -d 1
+SyslogIdentifier=windy_plugin
+Restart=on-failure
+RestartSec=10s
+TimeoutStopSec=10s
+
+[Install]
+WantedBy=multi-user.target

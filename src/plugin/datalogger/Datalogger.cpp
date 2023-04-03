@@ -200,6 +200,7 @@ float Datalogger::getTotalRainAccumulation(const std::time_t start, const std::t
     for (uint32_t i = 0; i < rainAccumulationBuffer.size(); i++) {
         const Sample_t& diff = rainAccumulationBuffer.at(i);
 
+        // Only inclusive of end time boundary since sample is rain since the previous sample,
         if (diff.timestamp > start && diff.timestamp <= end) {
             total += diff.data;
         }
