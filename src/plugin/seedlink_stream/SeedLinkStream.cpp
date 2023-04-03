@@ -10,6 +10,7 @@
 
 #include "SeedLinkStream.h"
 #include "Log.h"
+#include "UtilityFunctions.h"
 
 
 const bool DEBUG_OUTPUT = 						false;
@@ -113,9 +114,8 @@ void SeedLinkStream::openStream()
         throw std::runtime_error("Error adding streams to SeedLink stream connection request");
     }
 
-    char time_str[50];
-    strftime(time_str, 50, "%Y:%m:%d %H:%M:%S", &start_datetime);
-    Log::activity("Requesting SeedLink stream starting from " + std::string(time_str) + " UTC");
+
+    Log::activity("Requesting SeedLink stream starting from " + UtilityFunctions::formatTimestampToStr(now) + " UTC");
 
     Log::activity("Initialised SeedLink stream connection to " + std::string(sl_conn->sladdr));
 }

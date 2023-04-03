@@ -10,6 +10,7 @@
 #include "Datalogger.h"
 #include "Log.h"
 #include "Uploader.h"
+#include "UtilityFunctions.h"
 
 
 // How long to wait past the completion of the data window to allow data to be filtered through from the SeedLink server.
@@ -27,7 +28,7 @@ Datalogger::Datalogger(const StationConfiguration& stationConfig)
     const std::time_t now = std::time(nullptr);
     nextUploadTime = ((now / upload_period_s) * upload_period_s) + upload_period_s;
 
-    Log::detailed("Set first data upload time to: " + std::to_string(nextUploadTime));
+    Log::detailed("Set first data upload time to: " + UtilityFunctions::formatTimestampToStr(nextUploadTime));
 }
 
 
@@ -100,7 +101,7 @@ void Datalogger::sendDataUpload()
                     samples.push_back(sample);
                 }
                 else {
-                    Log::error("Rejecting sample with timestamp " + std::to_string(sample.timestamp) + " outside data upload window.");
+                    Log::error("Rejecting sample with timestamp " + UtilityFunctions::formatTimestampToStr(sample.timestamp) + " outside data upload window.");
                 }
 
                 buffer.erase(buffer.begin() + i);
