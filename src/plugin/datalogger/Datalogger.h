@@ -13,6 +13,7 @@
 
 #include "PluginDefs.h"
 #include "StationConfiguration.h"
+#include "FIFOBuffer.h"
 
 
 class Datalogger {
@@ -40,11 +41,17 @@ public:
 private:
     const StationConfiguration& stationConfig;
     std::array<SampleBuffer_t, EQRWS_CHANNELS::NUMBER_OF_CHANNELS> sampleBuffers;
+    Sample_t prevRainSample;
+    FIFOBuffer<Sample_t> rainAccumulationBuffer;
     time_t nextUploadTime;
     std::mutex dataMutex;
 
+
     bool hasUploadPeriodCompleted() const;
     void sendDataUpload();
+
+    void updateRainAccumulation(const Sample_t& sample);
+    float getTotalRainAccumulation(const std::time_t start, const std::time_t end) const;
 
     static float caluclateAverage(const SampleBuffer_t& samples);
     static float caluclatePeakValue(const SampleBuffer_t& samples);

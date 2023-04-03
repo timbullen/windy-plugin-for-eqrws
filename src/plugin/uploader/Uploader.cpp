@@ -35,7 +35,8 @@ void Uploader::performUpload(time_t timestamp,
                             float wind_dir,
                             float wind_gust,
                             float pressure,
-                            float humidity) const
+                            float humidity,
+                            float rain) const
 {
     std::ostringstream sstr;
     sstr << "Uploading data to Windy for timestamp " << std::to_string(timestamp) << std::fixed << std::endl;
@@ -45,6 +46,7 @@ void Uploader::performUpload(time_t timestamp,
     sstr << "\t" << std::setw(20) << std::left << "Wind Direction: "    << std::setw(10) << std::right << (int)wind_dir << "°" << std::endl;
     sstr << "\t" << std::setw(20) << std::left << "Humidity: "          << std::setw(10) << std::right << std::setprecision(1) << humidity << "%" << std::endl;
     sstr << "\t" << std::setw(20) << std::left << "Pressure: "          << std::setw(10) << std::right << std::setprecision(1) << pressure << " hPa" << std::endl;
+    sstr << "\t" << std::setw(20) << std::left << "Rain in past hour: " << std::setw(10) << std::right << std::setprecision(2) << rain << " mm" << std::endl;
     Log::detailed(sstr.str());
 
     // Create the URL string for the data upload
@@ -63,6 +65,7 @@ void Uploader::performUpload(time_t timestamp,
     url << "&" << "temp=" << std::setprecision(1) << temperature;
     url << "&" << "rh=" << std::setprecision(1) << humidity;
     url << "&" << "pressure=" << std::setprecision(1) << pressure;
+    url << "&" << "precip=" << std::setprecision(2) << rain;
 
     // Add the URL in quotes to escape special characters. 2>&1 combines stderr into stdout
     std::string cmd = "curl \"" + url.str() + "\" 2>&1";

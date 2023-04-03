@@ -35,7 +35,7 @@ void StationConfiguration::loadConfig(const std::string& config_filepath)
     std::ifstream in_file(config_filepath);
 
     if (in_file.fail()) {
-        throw std::runtime_error("Unable to open file for overwriting: " + config_filepath);
+        throw std::runtime_error("Unable to open file for reading: " + config_filepath);
     }
 
     parseFileContents(in_file);

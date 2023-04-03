@@ -30,7 +30,8 @@ public:
                         float wind_dir,
                         float wind_gust,
                         float pressure,
-                        float humidity) const;
+                        float humidity,
+                        float rain) const;
 
 private:
     const StationConfiguration& stationConfig;
