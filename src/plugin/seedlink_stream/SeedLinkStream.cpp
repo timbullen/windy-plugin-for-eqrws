@@ -5,11 +5,12 @@
  *      Author: Tim Bullen
  */
 
-#include <iomanip>                  // time string formatting
+#include <iomanip>    // time string formatting
 #include <sstream>
 
 #include "SeedLinkStream.h"
 #include "Log.h"
+
 
 const bool DEBUG_OUTPUT = 						false;
 const uint32_t SEEDLINK_PORT = 					18000;      // Always 18000, not configurable on the EQRWS instruments
@@ -112,7 +113,10 @@ void SeedLinkStream::openStream()
         throw std::runtime_error("Error adding streams to SeedLink stream connection request");
     }
 
-    Log::activity("Starting SeedLink stream from: " + std::string(sl_conn->begin_time));
+    char time_str[50];
+    strftime(time_str, 50, "%Y:%m:%d %H:%M:%S", &start_datetime);
+    Log::activity("Requesting SeedLink stream starting from " + std::string(time_str) + " UTC");
+
     Log::activity("Initialised SeedLink stream connection to " + std::string(sl_conn->sladdr));
 }
 
@@ -177,9 +181,9 @@ void SeedLinkStream::packetHandler(char *msrecord, int packet_type, int seqnum, 
     gmtime_r(&itime, &timep);
     char timestamp[20];
 
-    snprintf (timestamp, 20, "%04d.%03d.%02d:%02d:%02d.%01.0f",
-                timep.tm_year + 1900, timep.tm_yday + 1, timep.tm_hour,
-                timep.tm_min, timep.tm_sec, secfrac);
+    snprintf (timestamp, 20, "%04d:%02d:%02d %02d:%02d:%02d.%01.0f",
+                timep.tm_year + 1900, timep.tm_mon + 1, timep.tm_mday,
+                timep.tm_hour, timep.tm_min, timep.tm_sec, secfrac);
 
     // Process waveform data
     if (packet_type == SLDATA)

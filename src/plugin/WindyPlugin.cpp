@@ -9,8 +9,7 @@
 
 WindyPlugin::WindyPlugin(const StationConfiguration& stationConfig)
 	: datalogger(stationConfig),
-	  stream(stationConfig, datalogger),
-	  stationConfig(stationConfig)
+	  stream(stationConfig, datalogger)
 {
 
 }

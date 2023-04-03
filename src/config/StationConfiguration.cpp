@@ -24,8 +24,6 @@ const int MIN_SEEDLINK_LOCATION                 = 0;
 const int MAX_SEEDLINK_LOCATION                 = 99;
 
 
-
-
 StationConfiguration::StationConfiguration()
 {
 }
@@ -214,14 +212,14 @@ void StationConfiguration::parseFileContents(std::ifstream& file_stream)
         "seedlinkSubsourceRainAccumulation"
     });
 
-    for (const auto& channel_key : channel_keys) {
-        key = channel_key;
+    for (uint8_t channel_index = 0; channel_index < EQRWS_CHANNELS::NUMBER_OF_CHANNELS; channel_index++) {
+        key = channel_keys.at(channel_index);
         try {
             value = getKeyValue(lines, key);
             if (value.size() != SEEDLINK_CHANNEL_ID_LEN) {
                 throw std::runtime_error("Value must be " + std::to_string(SEEDLINK_CHANNEL_ID_LEN) + " character(s) long.");
             }
-            config.seedlink.subsources.at(EQRWS_CHANNELS::WIND_SPEED) = value;
+            config.seedlink.subsources.at(channel_index) = value;
         }
         catch (const std::exception& e) {
             throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));

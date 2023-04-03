@@ -17,25 +17,23 @@ public:
 	WindyPlugin(const StationConfiguration& stationConfig);
 
 	/**
-	 * TODO
+	 * Initialises the plugin and its subsystems.
 	 */
 	void start();
 
 	/**
-	 * TODO
+	 * Run the plugin. This should be polled inside the main loop.
 	 */
 	void run();
 
 	/**
-	 * TODO
+	 * Exits all subprocesses and cleanly closes the plugin.
 	 */
 	void close();
 
 private:
 	Datalogger datalogger;
 	SeedLinkStream stream;
-
-	const StationConfiguration& stationConfig;
 };
 
 #endif /* WINDYPLUGIN_H_ */

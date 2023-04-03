@@ -20,20 +20,11 @@
 
 
 /**
- * Thread Instances
- */
-
-
-
-
-/**
  * Local Variables
  */
 
-std::atomic<bool> exitApplication;
-
-// TODO: get this from the command line
-const std::string CONFIG_FILEPATH = "/media/sf_shared/CSI_windy_configuration.ini";
+const uint32_t MAIN_LOOP_POLL_PERIOD_ms =       100;
+std::atomic<bool> exitApplication =             false;
 
 
 /**
@@ -41,12 +32,6 @@ const std::string CONFIG_FILEPATH = "/media/sf_shared/CSI_windy_configuration.in
  */
 
 static void sighandler(int signum);
-
-
-/**
- * Public Function Implementation
- */
-
 
 
 /**
@@ -66,6 +51,8 @@ void sighandler(int signum)
 
 int main(int argc, char **argv)
 {
+    std::string config_path;
+
     if (argc > 0)
     {
         for (int i = 0 ; i < argc ; i++)
@@ -73,8 +60,16 @@ int main(int argc, char **argv)
             if ((strcmp(argv[i], "--version")) == 0
                     || (strcmp(argv[i], "-v") == 0))
             {
-                std::cout << "Windy Plugin for EQRWS" << '\n';
-                std::cout << "Version " << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_PATCH << '\n';
+                std::cout << "Windy Plugin for EQRWS" << std::endl;
+                std::cout << "Version " << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_PATCH << std::endl;
+                exit(EXIT_SUCCESS);
+            }
+
+            if ((strcmp(argv[i], "--help")) == 0
+                    || (strcmp(argv[i], "-h") == 0))
+            {
+                std::cout << "Windy Plugin for EQRWS" << std::endl;
+                // TODO: add a help paragraph here
                 exit(EXIT_SUCCESS);
             }
 
@@ -95,24 +90,32 @@ int main(int argc, char **argv)
                         }
                     }
                     catch (...) {
-                        std::cout << "Please specify the print output verbosity value as a command line parameter. eg -d 1" << '\n';
-                        std::cout << "  0 - No std output." << '\n';
-                        std::cout << "  1 - Print errors only." << '\n';
-                        std::cout << "  2 - Print errors and basic activity messages." << '\n';
-                        std::cout << "  3 - Print errors and detailed activity messages." << '\n';
+                        std::cout << "Please specify the print output verbosity value as a command line parameter. eg -d 1" << std::endl;
+                        std::cout << "  0 - No std output." << std::endl;
+                        std::cout << "  1 - Print errors only." << std::endl;
+                        std::cout << "  2 - Print errors and basic activity messages." << std::endl;
+                        std::cout << "  3 - Print errors and detailed activity messages." << std::endl;
                         exit(EXIT_FAILURE);
                     }
+                }
+            }
+
+            if ((strcmp(argv[i], "--config")) == 0
+                    || (strcmp(argv[i], "-c") == 0))
+            {
+                if (argc > (i + 1))
+                {
+                    config_path = std::string(argv[i+1]);
                 }
             }
         }
     }
 
-    if (getuid() != 0) {
-        std::cout << "This application must be run as root." << std::endl;
+    // Fall-through if the config filepath wasn't provided in the command line args
+    if (config_path == "") {
+        std::cout << "Please provide the path to the configuration file as a command line parameter. eg --config /etc/EQRWS_Windy_plugin.ini" << std::endl;
         exit(EXIT_FAILURE);
     }
-
-    exitApplication = false;
 
     // Catch SIGTERM signals to perform a graceful shutdown of the system.
     signal(SIGTERM, sighandler);
@@ -121,10 +124,10 @@ int main(int argc, char **argv)
     StationConfiguration stationConfig;
 
     try {
-    	stationConfig.loadConfig(CONFIG_FILEPATH);
+    	stationConfig.loadConfig(config_path);
     }
     catch (const std::exception& e) {
-    	std::cout << "Failed to load a valid configuration from the file at path '" << CONFIG_FILEPATH << "'." << std::endl;
+    	std::cout << "Failed to load a valid configuration from the file at path '" << config_path << "'." << std::endl;
     	std::cout << "Error: " << e.what() << std::endl;
     	exit(EXIT_FAILURE);
     }
@@ -138,7 +141,7 @@ int main(int argc, char **argv)
     	plugin.run();
 
         // Sleep here to avoid consuming 100% CPU
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(MAIN_LOOP_POLL_PERIOD_ms));
     }
 
     plugin.close();

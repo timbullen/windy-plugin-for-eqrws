@@ -53,7 +53,7 @@ void Uploader::performUpload(time_t timestamp,
     url << "https://stations.windy.com/pws/update/" << stationConfig.getConfig().windyAPIKey;
 
     // Set the station number
-    url << "?" << "station=" << 0;  // TODO: make this configurable for users with multiple stations
+    url << "?" << "station=" << stationConfig.getConfig().stationNumber;
 
     // Add the timestamp and the data values to the URL query string
     url << "&" << "ts=" << timestamp;
