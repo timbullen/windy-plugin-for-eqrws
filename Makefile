@@ -26,8 +26,8 @@ LIB_DIR=lib \
         lib/jwt-cpp/include
 
 # Libraries to link to. Order matters, place dependent libraries first.
-STATIC_LIBS= #slplugin
-DYN_LIBS=
+STATIC_LIBS= slink
+DYN_LIBS= pthread
 
 # The C++ and C compilers to be used
 CROSS_COMPILE:=

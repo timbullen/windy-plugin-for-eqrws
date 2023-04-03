@@ -10,13 +10,31 @@
 
 #include "StationConfiguration.h"
 #include "SeedLinkStream.h"
+#include "Datalogger.h"
 
 class WindyPlugin {
 public:
 	WindyPlugin(const StationConfiguration& stationConfig);
 
+	/**
+	 * TODO
+	 */
+	void start();
+
+	/**
+	 * TODO
+	 */
+	void run();
+
+	/**
+	 * TODO
+	 */
+	void close();
+
 private:
+	Datalogger datalogger;
 	SeedLinkStream stream;
+
 	const StationConfiguration& stationConfig;
 };
 

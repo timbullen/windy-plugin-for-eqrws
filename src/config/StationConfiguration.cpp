@@ -10,6 +10,22 @@
 #include "StationConfiguration.h"
 #include "Log.h"
 
+
+const int MIN_DATA_UPLOAD_PERIOD_s              = 60;
+const int MAX_DATA_UPLOAD_PERIOD_s              = 6 * 60 * 60;
+
+const int SEEDLINK_NETWORK_ID_LEN               = 2;
+const int SEEDLINK_STATION_ID_LEN               = 4;
+const int SEEDLINK_BAND_LEN                     = 1;
+const int SEEDLINK_SOURCE_LEN                   = 1;
+const int SEEDLINK_CHANNEL_ID_LEN               = 1;
+
+const int MIN_SEEDLINK_LOCATION                 = 0;
+const int MAX_SEEDLINK_LOCATION                 = 99;
+
+
+
+
 StationConfiguration::StationConfiguration()
 {
 }
@@ -27,7 +43,7 @@ void StationConfiguration::loadConfig(const std::string& config_filepath)
     parseFileContents(in_file);
 
     // Finished
-    Log::activity("Loaded the instrument configuration.");
+    Log::activity("Successfully loaded the instrument configuration.");
     loadOK = true;
 }
 
@@ -63,42 +79,154 @@ void StationConfiguration::parseFileContents(std::ifstream& file_stream)
     file_stream.close();
 
     // Extract all required key/value pairs
-    config.stationName = getKeyValue(lines, "stationName");
-    config.windyAPIKey = getKeyValue(lines, "windyAPIKey");
+    std::string key, value;
 
-    std::string lat = getKeyValue(lines, "latitude");
+
+    key = "dataUploadPeriodSecs";
     try {
-    	config.latitude = std::stod(lat);
+        value = getKeyValue(lines, key);
+        int num = std::stoi(value);
+        if (num < MIN_DATA_UPLOAD_PERIOD_s || num > MAX_DATA_UPLOAD_PERIOD_s) {
+            throw std::runtime_error("Value must be between " + std::to_string(MIN_DATA_UPLOAD_PERIOD_s) + " and " + std::to_string(MAX_DATA_UPLOAD_PERIOD_s) + " seconds.");
+        }
+        config.uploadPeriod_s = num;
     }
-    catch (...) {
-    	throw std::runtime_error("Invalid format provided for latitude value: " + lat + ". Express location coordinates in floating point format, eg. -43.530629");
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
     }
 
-    std::string longitude = getKeyValue(lines, "longitude");
+
+    key = "stationNumber";
     try {
-    	config.longitude = std::stod(longitude);
+        value = getKeyValue(lines, key);
+        config.stationNumber = std::stoi(value);
     }
-    catch (...) {
-    	throw std::runtime_error("Invalid format provided for longitude value: " + longitude + ". Express location coordinates in floating point format, eg. -43.530629");
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
     }
 
-    std::string elevation = getKeyValue(lines, "elevation");
+
+    key = "windyAPIKey";
     try {
-    	config.elevation = std::stod(elevation);
+        config.windyAPIKey = getKeyValue(lines, key);
     }
-    catch (...) {
-    	throw std::runtime_error("Invalid format provided for elevation value: " + elevation);
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
     }
 
-    std::string trans_height = getKeyValue(lines, "transducer_height");
+
+    key = "address";
     try {
-    	config.transducerHeight = std::stod(trans_height);
+        config.IPAddress = getKeyValue(lines, key);
     }
-    catch (...) {
-    	throw std::runtime_error("Invalid format provided for transducer height value: " + trans_height);
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
     }
 
-    config.IPAddress = getKeyValue(lines, "EQRWS_address");
+
+    key = "seedlinkNetworkID";
+    try {
+        value = getKeyValue(lines, key);
+        if (value.size() != SEEDLINK_NETWORK_ID_LEN) {
+            throw std::runtime_error("Value must be " + std::to_string(SEEDLINK_NETWORK_ID_LEN) + " character(s) long.");
+        }
+        config.seedlink.networkID = value;
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
+    }
+
+
+    key = "seedlinkStationID";
+    try {
+        value = getKeyValue(lines, key);
+        if (value.size() != SEEDLINK_STATION_ID_LEN) {
+            throw std::runtime_error("Value must be " + std::to_string(SEEDLINK_STATION_ID_LEN) + " character(s) long.");
+        }
+        config.seedlink.stationID = value;
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
+    }
+
+
+    key = "seedlinkLocation";
+    try {
+        value = getKeyValue(lines, key);
+        int num = std::stoi(value);
+        if (num < MIN_SEEDLINK_LOCATION || num > MAX_SEEDLINK_LOCATION) {
+            throw std::runtime_error("Value must be between " + std::to_string(MIN_SEEDLINK_LOCATION) + " and " + std::to_string(MAX_SEEDLINK_LOCATION) + ".");
+        }
+        config.seedlink.location = num;
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
+    }
+
+
+    key = "seedlinkResolutionMicrounits";
+    try {
+        value = getKeyValue(lines, key);
+        int num = std::stoi(value);
+        if (num != 1 && num != 10 && num != 1000) {
+            throw std::runtime_error("Value must be one of: 1, 10 or 1000");
+        }
+        config.seedlink.resolution_microunits = num;
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
+    }
+
+
+    key = "seedlinkBand";
+    try {
+        value = getKeyValue(lines, key);
+        if (value.size() != SEEDLINK_BAND_LEN) {
+            throw std::runtime_error("Value must be " + std::to_string(SEEDLINK_BAND_LEN) + " character(s) long.");
+        }
+        config.seedlink.band = value;
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
+    }
+
+
+    key = "seedlinkSource";
+    try {
+        value = getKeyValue(lines, key);
+        if (value.size() != SEEDLINK_SOURCE_LEN) {
+            throw std::runtime_error("Value must be " + std::to_string(SEEDLINK_SOURCE_LEN) + " character(s) long.");
+        }
+        config.seedlink.source = value;
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
+    }
+
+
+    const std::array<std::string, EQRWS_CHANNELS::NUMBER_OF_CHANNELS> channel_keys ({
+        "seedlinkSubsourceWindSpeed",
+        "seedlinkSubsourceWindDir",
+        "seedlinkSubsourceTemperature",
+        "seedlinkSubsourcePressure",
+        "seedlinkSubsourceHumidity",
+        "seedlinkSubsourceRainIntensity",
+        "seedlinkSubsourceRainAccumulation"
+    });
+
+    for (const auto& channel_key : channel_keys) {
+        key = channel_key;
+        try {
+            value = getKeyValue(lines, key);
+            if (value.size() != SEEDLINK_CHANNEL_ID_LEN) {
+                throw std::runtime_error("Value must be " + std::to_string(SEEDLINK_CHANNEL_ID_LEN) + " character(s) long.");
+            }
+            config.seedlink.subsources.at(EQRWS_CHANNELS::WIND_SPEED) = value;
+        }
+        catch (const std::exception& e) {
+            throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
+        }
+    }
 }
 
 
@@ -110,11 +238,15 @@ std::string StationConfiguration::getKeyValue(const std::vector<std::string>& li
 
 	for (const auto& line : lines) {
 		if (line.find(key) != std::string::npos) {
-			return trimWhitespaces(line.substr(line.rfind('=') + 1));
+			std::string result = trimWhitespaces(line.substr(line.rfind('=') + 1));
+			if (result == "") {
+			    throw std::runtime_error("Empty value was provided for key: " + key);
+			}
+			return result;
 		}
 	}
 
-	throw std::runtime_error("Unable to find configuration value for key: " + key);
+	throw std::runtime_error("Unable to find key: " + key);
 }
 
 

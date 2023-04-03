@@ -5,16 +5,18 @@
  *      Author: Tim Bullen
  */
 
-#include <signal.h>     // SIGPIPE signals
-#include <unistd.h>
+#include <csignal>     // SIGPIPE signals
+#include <cstdint>
 #include <atomic>
 #include <string>
 #include <iostream>
 #include <cstring>
+#include <thread>
 
 #include "version.h"
 #include "Log.h"
 #include "StationConfiguration.h"
+#include "WindyPlugin.h"
 
 
 /**
@@ -31,7 +33,7 @@
 std::atomic<bool> exitApplication;
 
 // TODO: get this from the command line
-const std::string CONFIG_FILEPATH = "/media/sf_shared/windy-plugin-for-eqrws/configuration.ini";
+const std::string CONFIG_FILEPATH = "/media/sf_shared/CSI_windy_configuration.ini";
 
 
 /**
@@ -127,11 +129,19 @@ int main(int argc, char **argv)
     	exit(EXIT_FAILURE);
     }
 
+    WindyPlugin plugin(stationConfig);
+
+    plugin.start();
+
     while (!exitApplication)
     {
+    	plugin.run();
+
         // Sleep here to avoid consuming 100% CPU
-        usleep(1000);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+
+    plugin.close();
 
     Log::activity("Application finished.");
 
