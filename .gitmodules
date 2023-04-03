@@ -1,0 +1,3 @@
+[submodule "lib/seedlink"]
+	path = lib/seedlink
+	url = https://github.com/SeisComP/seedlink.git
