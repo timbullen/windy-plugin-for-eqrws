@@ -21,7 +21,8 @@ OUTPUT_DIR=bin
 TARGET_DIR=$(OUTPUT_DIR)/target
 
 # Where the find the libraries
-LIB_DIR=lib 
+LIB_DIR=lib \
+        lib/seedlink/libs/3rd-party/libslink
 
 # Libraries to link to. Order matters, place dependent libraries first.
 STATIC_LIBS= slink
@@ -55,7 +56,8 @@ INC_DIRS+=$(LIB_DIR)
 # Flags passed to the preprocessor. Add the include paths
 CPPFLAGS+=$(foreach dir,$(INC_DIRS),-I$(dir))
 
-# Linker flags. Link the libraries
+# Linker flags. Add library paths and link the libraries
+LDFLAGS += $(foreach dir,$(LIB_DIR),-L$(dir))
 LDFLAGS += $(foreach lib,$(STATIC_LIBS),-l:lib$(lib).a)
 LDFLAGS += $(foreach lib,$(DYN_LIBS),-l$(lib))
 

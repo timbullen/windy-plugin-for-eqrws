@@ -24,9 +24,8 @@ Clone this repository and its submodules with the following command:
 
 The plugin must link the `slinktool` library in order to read from the SeedLink servers. We compile this with the following:
 
-	cd windy-plugin-for-eqrws/lib/seedlink/apps/3rd-party/slinktool/
+	cd windy-plugin-for-eqrws/lib/seedlink/libs/3rd-party/slinktool/
 	make
-	make install
 
 Then compile the plugin application using the following:
 

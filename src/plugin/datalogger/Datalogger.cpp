@@ -89,7 +89,7 @@ bool Datalogger::hasUploadPeriodCompleted() const
     const std::time_t now = std::time(nullptr);
 
     // Add a buffer period to allow the data from the end of the window to be filtered through
-    return (now >= (nextUploadTime + UPLOAD_PERIOD_BUFFER_s));
+    return (now >= static_cast<time_t>(nextUploadTime + UPLOAD_PERIOD_BUFFER_s));
 }
 
 
@@ -115,7 +115,7 @@ void Datalogger::sendDataUpload()
             const Sample_t& sample = buffer.at(i);
 
             if (sample.timestamp <= nextUploadTime) {
-                if (sample.timestamp >= (nextUploadTime - stationConfig.getConfig().uploadPeriod_s)) {
+                if (sample.timestamp >= static_cast<time_t>(nextUploadTime - stationConfig.getConfig().uploadPeriod_s)) {
                     samples.push_back(sample);
                 }
                 else {

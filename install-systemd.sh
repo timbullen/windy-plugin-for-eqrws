@@ -31,7 +31,7 @@ cp windy-plugin.service $SYSTEMD_DIR/
 if [ $? -ne 0 ]; then
 	echo "Unable to copy systemd service file to $SYSTEMD_DIR"
 	exit 1
-file
+fi
 
 chmod 666 $SYSTEMD_DIR/windy-plugin.service
 
@@ -43,13 +43,13 @@ systemctl enable windy-plugin
 if [ $? -ne 0 ]; then
 	echo "Unable to enable the plugin systemd service"
 	exit 1
-file
+fi
 
 # Start running the plugin now
 systemctl start windy-plugin
 if [ $? -ne 0 ]; then
 	echo "Unable to start running the plugin systemd service"
 	exit 1
-file
+fi
 
 exit 0
