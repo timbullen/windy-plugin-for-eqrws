@@ -1,8 +1,24 @@
 #!/bin/sh
 # Installs the systemd service on the system
 
-CONFIG_DIR=/etc/EQRWS_windy_plugin
+TARGET_NAME=EQRWS_windy_plugin
+TARGET=bin/target/$TARGET_NAME
+BIN_DIR=/usr/local/bin
+CONFIG_DIR=/etc/$TARGET_NAME
 SYSTEMD_DIR=/etc/systemd/system/
+
+if [ ! -f $TARGET ]; then
+	echo "Plugin binary file $TARGET must be built first before installation can occur. Use the 'make' command"
+	exit 1
+fi
+
+cp $TARGET $BIN_DIR/
+if [ $? -ne 0 ]; then
+	echo "Unable to copy binary file to $BIN_DIR"
+	exit 1
+fi
+
+chmod 777 $BIN_DIR/$TARGET_NAME
 
 mkdir -p $CONFIG_DIR
 cp configuration.ini $CONFIG_DIR/

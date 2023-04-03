@@ -68,8 +68,11 @@ int main(int argc, char **argv)
             if ((strcmp(argv[i], "--help")) == 0
                     || (strcmp(argv[i], "-h") == 0))
             {
-                std::cout << "Windy Plugin for EQRWS" << std::endl;
-                // TODO: add a help paragraph here
+                std::cout << "Usage: EQRWS_windy_plugin [options] -c <path/to/configuration>" << std::endl;
+                std::cout << " -v, --version          Prints the version number and exits." << std::endl;
+                std::cout << " -h, --help             Prints this message and exits." << std::endl;
+                std::cout << " -d, --debug <level>    Sets the logging level verbosity." << std::endl;
+                std::cout << " -c, --config <path>    Sets the path to the configuration file to use." << std::endl;
                 exit(EXIT_SUCCESS);
             }
 
