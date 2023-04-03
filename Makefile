@@ -21,9 +21,7 @@ OUTPUT_DIR=bin
 TARGET_DIR=$(OUTPUT_DIR)/target
 
 # Where the find the libraries
-LIB_DIR=lib \
-        lib/websocketpp \
-        lib/jwt-cpp/include
+LIB_DIR=lib 
 
 # Libraries to link to. Order matters, place dependent libraries first.
 STATIC_LIBS= slink
