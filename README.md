@@ -24,7 +24,8 @@ Clone this repository and its submodules with the following command:
 
 The plugin must link the `slinktool` library in order to read from the SeedLink servers. We compile this with the following:
 
-	cd windy-plugin-for-eqrws/lib/seedlink/libs/3rd-party/slinktool/
+	cd windy-plugin-for-eqrws/
+	cd lib/seedlink/libs/3rd-party/libslink/
 	make
 
 Then compile the plugin application using the following:
@@ -63,6 +64,15 @@ The application reads its configuration from the `.ini` configuration file at st
 Thw following will install the plugin using systemd to always be running in the background.
 
 	./install-systemd.sh
+
+You can then view the status of the service with the following.
+
+	systemctl status windy-plugin
+
+And stop and start the process.
+
+	systemctl stop windy-plugin
+	systemctl start windy-plugin
 
 ## Usage
 

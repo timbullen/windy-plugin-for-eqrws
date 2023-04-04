@@ -61,6 +61,14 @@ void Datalogger::addSample(const uint8_t channel_index, const Sample_t& sample)
     if (channel_index == EQRWS_CHANNELS::RAIN_ACC) {
         updateRainAccumulation(sample);
     }
+
+    // Check for warnings
+    if (channel_index == EQRWS_CHANNELS::PRESSURE) {
+        if (sample.data < 800.0 || sample.data > 1200.0) {
+            Log::error("Warning! Received abnormal atmospheric pressure value of " + std::to_string(sample.data)
+                    + ". Are you sure you have configured the correct SeedLink resolution?");
+        }
+    }
 }
 
 
