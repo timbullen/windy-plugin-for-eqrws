@@ -8,7 +8,7 @@ This application reads the weather data from the SeedLink server of an EQRWS wea
 
 If the connection to your EQRWS weather station is broken, no data updates will be sent to Windy during this time. Once the connection is reestablished, the updates will continue but will not cover the disconnection period.
 
-## Dependables
+## Dependencies
 
 This application requires a system that has [curl](https://github.com/curl/curl) installed, which comes pre-installed on most operating systems. Curl is used to perform the HTTPS requests to upload data to the Windy servers.
 
