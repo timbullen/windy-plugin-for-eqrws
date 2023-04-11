@@ -73,19 +73,28 @@ void Uploader::performUpload(time_t timestamp,
     // Create a pipe to the system call so we can read the output
     std::array<char, 200> buffer;
     std::string result = "";
-    std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd.c_str(), "r"), pclose);
+
+    FILE* pipe = popen(cmd.c_str(), "r");
 
     if (!pipe) {
         Log::error("Error executing HTTPS upload. Error: " + std::string(strerror(errno)));
+        return;
     }
     else {
-        while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+        while (fgets(buffer.data(), buffer.size(), pipe) != nullptr) {
             result += buffer.data();
         }
     }
 
-    if (result != "") {
-        Log::detailed("Received response from HTTPS upload: " + result);
+    if (pclose(pipe) != EXIT_SUCCESS) {
+        Log::error("Attempted HTTPS upload to Windy returned non-zero exit code.");
+
+        if (result != "") {
+            Log::error("Output from HTTPS upload: " + result);
+        }
+    }
+    else if (result != "") {
+        Log::detailed("Output from HTTPS upload: " + result);
     }
 }
 
