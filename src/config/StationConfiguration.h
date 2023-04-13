@@ -21,7 +21,7 @@
 typedef struct SeedLinkConfigutation {
     std::string             networkID;
     std::string             stationID;
-    uint32_t                location;
+    std::string             location;
     uint32_t                resolution_microunits;
     std::string             band;
     std::string             source;

@@ -16,12 +16,10 @@ const int MAX_DATA_UPLOAD_PERIOD_s              = 6 * 60 * 60;
 
 const int SEEDLINK_NETWORK_ID_LEN               = 2;
 const int SEEDLINK_STATION_ID_LEN               = 4;
+const int SEEDLINK_LOCATION_LEN                 = 2;
 const int SEEDLINK_BAND_LEN                     = 1;
 const int SEEDLINK_SOURCE_LEN                   = 1;
 const int SEEDLINK_CHANNEL_ID_LEN               = 1;
-
-const int MIN_SEEDLINK_LOCATION                 = 0;
-const int MAX_SEEDLINK_LOCATION                 = 99;
 
 
 StationConfiguration::StationConfiguration()
@@ -151,11 +149,10 @@ void StationConfiguration::parseFileContents(std::ifstream& file_stream)
     key = "seedlinkLocation";
     try {
         value = getKeyValue(lines, key);
-        int num = std::stoi(value);
-        if (num < MIN_SEEDLINK_LOCATION || num > MAX_SEEDLINK_LOCATION) {
-            throw std::runtime_error("Value must be between " + std::to_string(MIN_SEEDLINK_LOCATION) + " and " + std::to_string(MAX_SEEDLINK_LOCATION) + ".");
+        if (value.size() != SEEDLINK_LOCATION_LEN) {
+            throw std::runtime_error("Value must be " + std::to_string(SEEDLINK_LOCATION_LEN) + " character(s) long.");
         }
-        config.seedlink.location = num;
+        config.seedlink.location = value;
     }
     catch (const std::exception& e) {
         throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));

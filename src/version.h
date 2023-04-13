@@ -8,7 +8,7 @@
  * software for bugfixes or improvements.
  */
 
-#define VERSION             100001
+#define VERSION             100002
 
 #define VERSION_MAJOR       VERSION / 100000
 #define VERSION_MINOR       VERSION / 100 % 1000

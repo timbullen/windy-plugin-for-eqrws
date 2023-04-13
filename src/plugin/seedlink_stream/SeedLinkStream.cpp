@@ -92,15 +92,10 @@ void SeedLinkStream::openStream()
     sl_conn->netto = 60;         // timeout in seconds if we haven't received anything
     sl_conn->netdly = 10;        // reconnection timer duration
 
-    // Configure the desired streams to extract. - All channel streams from the sensor
-    std::stringstream ss;
-    ss << std::setw(2) << std::setfill('0') << config.seedlink.location;		// Format stream location with leading zeroes
-    std::string stream_loc = ss.str();
-
     std::string stream_selectors = "";
     for (uint8_t channel_idx = 0; channel_idx < config.seedlink.subsources.size(); channel_idx++)
     {
-        stream_selectors += stream_loc
+        stream_selectors += config.seedlink.location
                 + config.seedlink.band
                 + config.seedlink.source
                 + config.seedlink.subsources[channel_idx] + ".D ";
