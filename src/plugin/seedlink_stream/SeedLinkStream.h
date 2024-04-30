@@ -8,7 +8,7 @@
 #ifndef SEEDLINKSTREAM_H_
 #define SEEDLINKSTREAM_H_
 
-#include <seedlink/libs/3rd-party/libslink/libslink.h>      // The client library interface
+#include <libslink/libslink.h>      // The client library interface
 #include <thread>
 #include <atomic>
 

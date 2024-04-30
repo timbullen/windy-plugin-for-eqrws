@@ -22,7 +22,7 @@ TARGET_DIR=$(OUTPUT_DIR)/target
 
 # Where the find the libraries
 LIB_DIR=lib \
-        lib/seedlink/libs/3rd-party/libslink
+        lib/libslink
 
 # Libraries to link to. Order matters, place dependent libraries first.
 STATIC_LIBS= slink

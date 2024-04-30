@@ -22,10 +22,10 @@ Clone this repository and its submodules with the following command:
 
 	git clone --recurse-submodules https://gitlab.com/tbullen/windy-plugin-for-eqrws.git
 
-The plugin must link the `slinktool` library in order to read from the SeedLink servers. We compile this with the following:
+The plugin must link the `libslink` library in order to read from the SeedLink servers. We compile this with the following:
 
 	cd windy-plugin-for-eqrws/
-	cd lib/seedlink/libs/3rd-party/libslink/
+	cd lib/libslink/
 	make
 
 Then compile the plugin application using the following:
