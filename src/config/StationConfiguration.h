@@ -33,7 +33,10 @@ typedef struct Configuration {
     // Windy Config
 	uint32_t                stationNumber;
 	std::string				windyAPIKey;
-	uint32_t                uploadPeriod_s;
+
+    // Datalogging Config
+    uint32_t                uploadPeriod_s;
+    uint32_t                windGustDuration_s;
 
 	// EQRWS Instrument Config
 	std::string             IPAddress;

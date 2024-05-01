@@ -14,6 +14,9 @@
 const int MIN_DATA_UPLOAD_PERIOD_s              = 60;
 const int MAX_DATA_UPLOAD_PERIOD_s              = 6 * 60 * 60;
 
+const int MIN_WIND_GUST_PERIOD_s                = 1;
+const int MAX_WIND_GUST_PERIOD_s                = 30;
+
 const int SEEDLINK_NETWORK_ID_LEN               = 2;
 const int SEEDLINK_STATION_ID_LEN               = 4;
 const int SEEDLINK_LOCATION_LEN                 = 2;
@@ -86,6 +89,20 @@ void StationConfiguration::parseFileContents(std::ifstream& file_stream)
             throw std::runtime_error("Value must be between " + std::to_string(MIN_DATA_UPLOAD_PERIOD_s) + " and " + std::to_string(MAX_DATA_UPLOAD_PERIOD_s) + " seconds.");
         }
         config.uploadPeriod_s = num;
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
+    }
+
+
+    key = "windGustDurationSecs";
+    try {
+        value = getKeyValue(lines, key);
+        int num = std::stoi(value);
+        if (num < MIN_WIND_GUST_PERIOD_s || num > MAX_WIND_GUST_PERIOD_s) {
+            throw std::runtime_error("Value must be between " + std::to_string(MIN_WIND_GUST_PERIOD_s) + " and " + std::to_string(MAX_WIND_GUST_PERIOD_s) + " seconds.");
+        }
+        config.windGustDuration_s = num;
     }
     catch (const std::exception& e) {
         throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));

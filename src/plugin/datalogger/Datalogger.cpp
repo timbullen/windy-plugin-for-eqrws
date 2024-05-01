@@ -144,7 +144,7 @@ void Datalogger::sendDataUpload()
 
         // If this is the wind speed channel, also calculate the wind gust
         if (channel_index == EQRWS_CHANNELS::WIND_SPEED) {
-            wind_gust = caluclatePeakValue(samples);
+            wind_gust = caluclatePeakWindGust(samples);
         }
     }
 
@@ -218,6 +218,27 @@ float Datalogger::getTotalRainAccumulation(const std::time_t start, const std::t
 }
 
 
+float Datalogger::caluclatePeakWindGust(const SampleBuffer_t& samples)
+{
+    /*
+     * Returns the peak recorded wind gust over the sample buffer of wind speed samples.
+     */
+
+    // The number of samples to use to calculate a wind gust
+    const uint32_t num_samples = std::max((uint32_t)1, stationConfig.getConfig().windGustDuration_s / EQRWS_SAMPLE_RATE_Hz);
+
+    float peak_gust = 0.0;
+
+    for (int32_t i = 0; i < static_cast<int32_t>(samples.size() - num_samples); i++) {
+        std::vector<Sample_t> gust_samples = std::vector<Sample_t>(samples.begin() + i, samples.begin() + i + num_samples);
+
+        peak_gust = std::max(peak_gust, caluclateAverage(gust_samples));
+    }
+
+    return peak_gust;
+}
+
+
 float Datalogger::caluclateAverage(const std::vector<Sample_t>& samples)
 {
     /*
@@ -236,21 +257,5 @@ float Datalogger::caluclateAverage(const std::vector<Sample_t>& samples)
 
     ave /= samples.size();
     return ave;
-}
-
-
-float Datalogger::caluclatePeakValue(const SampleBuffer_t& samples)
-{
-    /*
-     * Returns the peak absolute value of all the samples in the provided buffer.
-     */
-
-    float max_val = 0.0;
-
-    for (const Sample_t& sample : samples) {
-        max_val = std::max(max_val, std::abs(sample.data));
-    }
-
-    return max_val;
 }
 

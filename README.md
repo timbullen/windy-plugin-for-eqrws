@@ -42,6 +42,7 @@ The application reads its configuration from the `.ini` configuration file at st
 | Configuration Field | Description |
 | -------- | -------- |
 | `dataUploadPeriodSecs` | The frequency of the data uploads to the Windy servers, expressed in seconds. The Windy servers will reject updates that are more frequent than every 5 minutes. |
+| `windGustDurationSecs` | The duration over which a wind gust is measured. Default is 3 seconds, meaning the current wind gust value is the rolling average of the previous 3 seconds of wind speeds. |
 | `stationNumber` | The number of the EQRWS weather station in the user's Windy profile, for cases when the user has added multiple stations to their Windy account. |
 | `windyAPIKey` | The API key for the Windy user account. You can copy this from your Windy community profile webpage. |
 | `address` | The IP address of your EQRWS instrument on your network. It is recommended that you configure your EQRWS to use a static IP address if it is not using one. |

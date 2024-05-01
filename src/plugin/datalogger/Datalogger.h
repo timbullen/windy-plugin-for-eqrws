@@ -52,9 +52,9 @@ private:
 
     void updateRainAccumulation(const Sample_t& sample);
     float getTotalRainAccumulation(const std::time_t start, const std::time_t end) const;
+    float caluclatePeakWindGust(const SampleBuffer_t& samples);
 
     static float caluclateAverage(const SampleBuffer_t& samples);
-    static float caluclatePeakValue(const SampleBuffer_t& samples);
 };
 
 #endif /* DATALOGGER_H_ */
