@@ -102,7 +102,7 @@ std::string Uploader::constructUrl(
     url << "&" << "gust=" << std::setprecision(1) << wind_gust;
     url << "&" << "temp=" << std::setprecision(1) << temperature;
     url << "&" << "humidity=" << std::setprecision(1) << humidity;
-    url << "&" << "pressure=" << static_cast<int>(pressure * 100);  // Convert from hPa to Pa
+    url << "&" << "mbar="  << std::setprecision(2) << pressure;
     url << "&" << "precip=" << std::setprecision(2) << rain;
 
     return url.str();
