@@ -29,10 +29,15 @@ typedef struct SeedLinkConfigutation {
 } SeedLinkConfiguration_t;
 
 
+typedef struct WindyConfiguration {
+    std::string             stationId;
+    std::string             stationPassword;
+} WindyConfiguration_t;
+
+
 typedef struct Configuration {
     // Windy Config
-	uint32_t                stationNumber;
-	std::string				windyAPIKey;
+    WindyConfiguration_t    windy;
 
     // Datalogging Config
     uint32_t                uploadPeriod_s;
