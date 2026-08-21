@@ -13,6 +13,9 @@
 #include "Uploader.h"
 #include "Log.h"
 
+const std::string WINDY_API_BASE_URL = "https://stations.windy.com/api/v2/";
+
+
 Uploader::Uploader(const StationConfiguration& stationConfig)
     : stationConfig(stationConfig)
 {
@@ -49,13 +52,48 @@ void Uploader::performUpload(time_t timestamp,
     sstr << "\t" << std::setw(20) << std::left << "Rain in past hour: " << std::setw(10) << std::right << std::setprecision(2) << rain << " mm" << std::endl;
     Log::detailed(sstr.str());
 
-    // Create the URL string for the data upload
+    const std::string url = constructUrl(
+            timestamp,
+            temperature,
+            wind_speed,
+            wind_dir,
+            wind_gust,
+            pressure,
+            humidity,
+            rain
+    );
+
+    performHttpRequest(url);
+}
+
+
+/**
+ * Private Methods
+ */
+
+std::string Uploader::constructUrl(
+        time_t timestamp,
+        float temperature,
+        float wind_speed,
+        float wind_dir,
+        float wind_gust,
+        float pressure,
+        float humidity,
+        float rain) const
+{
+    /*
+     * Generates the URL string for the HTTP GET upload request for Windy API v2
+     */
+
+    auto config = stationConfig.getConfig();
+
     std::ostringstream url;
     url << std::fixed;  // Set fixed point expression only
-    url << "https://stations.windy.com/pws/update/" << stationConfig.getConfig().windyAPIKey;
+    url << WINDY_API_BASE_URL << "observation/update?";  // station measurement update endpoint
 
-    // Set the station number
-    url << "?" << "station=" << stationConfig.getConfig().stationNumber;
+    // Set Windy station ID and auth
+    url << "id=" << config.windy.stationId;
+    url << "&" << "PASSWORD=" << config.windy.stationPassword;
 
     // Add the timestamp and the data values to the URL query string
     url << "&" << "ts=" << timestamp;
@@ -63,12 +101,22 @@ void Uploader::performUpload(time_t timestamp,
     url << "&" << "wind=" << std::setprecision(1) << wind_speed;
     url << "&" << "gust=" << std::setprecision(1) << wind_gust;
     url << "&" << "temp=" << std::setprecision(1) << temperature;
-    url << "&" << "rh=" << std::setprecision(1) << humidity;
-    url << "&" << "pressure=" << std::setprecision(1) << pressure;
+    url << "&" << "humidity=" << std::setprecision(1) << humidity;
+    url << "&" << "mbar="  << std::setprecision(2) << pressure;
     url << "&" << "precip=" << std::setprecision(2) << rain;
 
+    return url.str();
+}
+
+
+void Uploader::performHttpRequest(const std::string& url)
+{
+    /*
+     * Makes the HTTP GET request to the windy servers and logs the output.
+     */
+
     // Add the URL in quotes to escape special characters. 2>&1 combines stderr into stdout
-    std::string cmd = "curl \"" + url.str() + "\" 2>&1";
+    std::string cmd = "curl \"" + url + "\" 2>&1";
 
     // Create a pipe to the system call so we can read the output
     std::array<char, 200> buffer;
@@ -97,4 +145,3 @@ void Uploader::performUpload(time_t timestamp,
         Log::detailed("Output from HTTPS upload: " + result);
     }
 }
-

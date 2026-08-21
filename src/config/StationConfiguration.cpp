@@ -109,19 +109,18 @@ void StationConfiguration::parseFileContents(std::ifstream& file_stream)
     }
 
 
-    key = "stationNumber";
+    key = "windyStationId";
     try {
-        value = getKeyValue(lines, key);
-        config.stationNumber = std::stoi(value);
+        config.windy.stationId = getKeyValue(lines, key);
     }
     catch (const std::exception& e) {
         throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));
     }
 
 
-    key = "windyAPIKey";
+    key = "windyStationPassword";
     try {
-        config.windyAPIKey = getKeyValue(lines, key);
+        config.windy.stationPassword = getKeyValue(lines, key);
     }
     catch (const std::exception& e) {
         throw std::runtime_error("Unable to parse value for key: '" + key + "'. Value: " + value + ". Error: " + std::string(e.what()));

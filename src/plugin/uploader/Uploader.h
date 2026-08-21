@@ -35,6 +35,18 @@ public:
 
 private:
     const StationConfiguration& stationConfig;
+
+    std::string constructUrl(
+            time_t timestamp,
+            float temperature,
+            float wind_speed,
+            float wind_dir,
+            float wind_gust,
+            float pressure,
+            float humidity,
+            float rain) const;
+
+    static void performHttpRequest(const std::string& url);
 };
 
 #endif /* UPLOADER_H_ */
